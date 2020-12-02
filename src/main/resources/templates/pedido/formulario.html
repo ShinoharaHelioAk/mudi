@@ -41,7 +41,7 @@
 			</div> -->
 			
 			<div class="card mt-3">
-				<form th:object="${requisicaoNovoPedido}" action="/pedido/novo" method="post" class="card-body">
+				<form th:object="${requisicaoNovoPedido}" th:action="@{/pedido/novo}" method="post" class="card-body">
 					<div class="form-group">
 						<label for="nomeProduto">Produto</label>
 						<!-- O th:field="*{nomeProduto}", tag do thymeleaf, gera automaticamente as propriedades html name, id e value e as gerencia -->
