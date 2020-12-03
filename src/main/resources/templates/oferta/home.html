@@ -10,22 +10,41 @@
 				<div class="card-body">
 					<div class="row">
 						<div class="col-12 col-sm-8 mb-3">
-							<div class="row">
+							<!-- <div class="row">
 								<div class="col-md-5">Valor: 
-									<input />
+									<input v-model="pedido.valorNegociado" />
 								</div>
 								<div class="col-md-7">Data de entrega:
-									<input />
+									<input v-model="pedido.dataDaEntrega" />
 								</div>
-							</div>
+							</div> -->
 							
 							<div>Produto</div>
 							<div><a v-bind:href="pedido.urlProduto">{{pedido.nomeProduto}}</a></div>
 							
-							<div>Descrição</div>
+							<div>Descrição:</div>
 							<div>
-								<textarea class="form-control">{{pedido.nomeProduto}}</textarea>
+								<textarea disabled="disabled" class="form-control">{{pedido.nomeProduto}}</textarea>
 							</div>
+							
+							<div class="row mt-3">
+								<div class="col-md-5">Valor: 
+									<input class="form-control" v-model="pedido.valorNegociado" />
+								</div>
+								<div class="col-md-7">Data de entrega:
+									<input class="form-control" v-model="pedido.dataDaEntrega" />
+								</div>
+							</div>
+							
+							<div class="row mt-3">
+								<div class="col-md-12">Comentário:
+									<textarea v-model="pedido.comentario" class="form-control"></textarea>
+								</div>
+							</div>
+							
+							<button v-if="pedido.ofertaEnviada" class="btn btn-success mt-3">Oferta Enviada</button>
+							<button v-else v-on:click="enviarOferta(pedido)" class="btn btn-primary mt-3">Enviar Oferta</button>
+							
 						</div>
 						
 						<div class="col-12 col-sm-4">
@@ -75,7 +94,24 @@
 					mounted() {
 						axios
 					      .get('http://localhost:8080/api/pedidos/aguardando')
-					      .then(response => (this.pedidos = response.data))
+					      .then(response => {
+					    	  response.data.forEach(pedido => pedido.ofertaEnviada = false)
+					    	  this.pedidos = response.data
+					      })
+					},
+					methods: {
+						enviarOferta: function(pedido) {
+							axios
+								.post('http://localhost:8080/api/ofertas'
+									, {
+										pedidoId: pedido.id,
+										valor: pedido.valorNegociado,
+										dataDaEntrega: pedido.dataDaEntrega,
+										comentario: pedido.comentario
+									}
+								)
+								.then(response => pedido.ofertaEnviada = true);
+						}
 					}
 				});
 			}
